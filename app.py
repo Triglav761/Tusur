@@ -76,7 +76,7 @@ def get_color_chart(path, filename):
     return 0
 
 
-collage_path = './static/collage.jpg'
+#collage_path = './static/collage.jpg'
 
 
 # главная страница приложения
@@ -100,11 +100,11 @@ def index():
         # открываем изображение
         image1 = Image.open(filename1)
         # комбинируем изображения и сохраняем файл
-        # collage = color_change(image1, image2, color_red, color_green, color_blue)
-        # collage.save(collage_path)
+        #collage = color_change(image1, image2, color_red, color_green, color_blue)
+        #collage.save(collage_path)
         get_color_chart(filename1, 'hist1')
         # get_color_chart(filename2, 'hist2')
-        get_color_chart(collage_path, 'hist3')
+        #get_color_chart(collage_path, 'hist3')
         return redirect(url_for("result", image1=filename1))
 
     return render_template("index.html", form=form)
