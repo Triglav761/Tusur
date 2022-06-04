@@ -28,30 +28,41 @@ class CollageForm(FlaskForm):
 
 # Веб-приложение должно менять цветовые карты изображения r, g, b в соответствии
 # с заданным пользователем порядком
+
 def color_change(img1, color_red, color_green, color_blue):
-    # fig, axes = plt.subplots(nrows=1, ncols=3)  # функция, которая возвращает кортеж, содержащий объект фигуры и осей
+    picture = Image.open(img1)
+    px = picture.load()
+    width, height = picture.size
 
-    #  Данные в image доступны только для чтения
-    # image_1 = img1.copy()
-    # image_2 = img1.copy()
-    # image_3 = img1.copy()
-    # image_1[:, :, 0] = 0
-    # axes[0].imshow(image_1)
+    for x in range(width):
+        for y in range(height):
+            old_color = (px[x, y])
+            new_color = (color_red, color_green, color_blue)
+            picture.putpixel((x, y), tuple(map(lambda i, j: abs(i - j), old_color, new_color)))
+    picture.save('Result.jpg')
 
-    # image_2[:, :, 1] = 0
-    # axes[1].imshow(image_2)
 
-    # image_3[:, :, 2] = 0
-    # axes[2].imshow(image_3)
-
-    # for ax in axes:
-    #    ax.set_xticks([])
-    #    ax.set_yticks([])
-    img_color_change = Image.new('RGB', (color_red, color_green, color_blue))
-    img_color_change.paste(img1, (color_red, color_green, color_blue))
-    # fig.set_figwidth(12)
-    # fig.set_figheight(6)
-    return None
+# def color_change(img1, color_red, color_green, color_blue):
+#    fig, axes = plt.subplots(nrows=1, ncols=3)  # функция, которая возвращает кортеж, содержащий объект фигуры и осей
+#
+#    #  Данные в image доступны только для чтения
+#    image_1 = img1.copy()
+#    image_2 = img1.copy()
+#    image_3 = img1.copy()
+#    image_1[:, :, 0] = 0
+#    axes[0].imshow(image_1)
+#    image_2[:, :, 1] = 0
+#    axes[1].imshow(image_2)
+#    image_3[:, :, 2] = 0
+#    axes[2].imshow(image_3)
+#    for ax in axes:
+#        ax.set_xticks([])
+#        ax.set_yticks([])
+#    img_color_change = Image.new('RGB', (color_red, color_green, color_blue))
+#    img_color_change.paste(img1, (color_red, color_green, color_blue))
+#    # fig.set_figwidth(12)
+#    # fig.set_figheight(6)
+#    return None
 
 
 # выдавать графики распределения цветов исходной картинки и графики среднего значения цвета по вертикали и горизонтали.
@@ -76,7 +87,7 @@ def get_color_chart(path, filename):
     return 0
 
 
-#collage_path = './static/collage.jpg'
+# collage_path = './static/collage.jpg'
 
 
 # главная страница приложения
@@ -100,11 +111,11 @@ def index():
         # открываем изображение
         image1 = Image.open(filename1)
         # комбинируем изображения и сохраняем файл
-        #collage = color_change(image1, image2, color_red, color_green, color_blue)
-        #collage.save(collage_path)
+        # collage = color_change(image1, image2, color_red, color_green, color_blue)
+        # collage.save(collage_path)
         get_color_chart(filename1, 'hist1')
         # get_color_chart(filename2, 'hist2')
-        #get_color_chart(collage_path, 'hist3')
+        # get_color_chart(collage_path, 'hist3')
         return redirect(url_for("result", image1=filename1))
 
     return render_template("index.html", form=form)
