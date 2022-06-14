@@ -7,22 +7,11 @@
     <form method="POST" enctype="multipart/form-data">
         {{ form.hidden_tag() }}
         <p>{{ form.img1.label }}: {{ form.img1() }}</p>
-
-        <div>
-            {{ form.color_red.label }}: {{ form.color_red(value="0", oninput="this.nextElementSibling.value = this.value") }}
-            <output>0</output>
-        </div>
-        <div>
-            {{ form.color_green.label }}: {{ form.color_green(value="0", oninput="this.nextElementSibling.value = this.value") }}
-            <output>0</output>
-        </div>
-        <div>
-            {{ form.color_blue.label }}: {{ form.color_blue(value="0", oninput="this.nextElementSibling.value = this.value") }}
-            <output>0</output>
-        </div>
+        <p>{{ form.shape.label }}: {{ form.shape() }}</p>
 
 
         <div>{{ form.submit() }}</div>
+
     </form>
 
 

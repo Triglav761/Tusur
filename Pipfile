@@ -9,6 +9,7 @@ aircable-library-op = "*"
 base = "*"
 jinja2 = "*"
 matplotlib = "*"
+scikit-image = "*"
 
 [dev-packages]
 
