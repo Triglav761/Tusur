@@ -28,6 +28,7 @@ class CollageForm(FlaskForm):
 # Доделать выдачу средних значений.!!
 def color_map(path, filename): # график
     image = Image.open(path)
+
     # трансформируем изображение в numpy массив
     np_image = np.array(image)
     # транспонируем, чтобы получить доступ к значениям RGB
@@ -47,31 +48,45 @@ def color_map(path, filename): # график
 
 
 ################
-def color_pics(image1, shape):
-    image2 = image1
-    plt.imshow(image2, cmap='plasma')  # отобразить изображение
-    plt.savefig('./static/Plasma.jpg')
+#def color_pics(image1):
+#    #if shape == 'Normal':
+#    #pic = plt.imread('./static/1.jpg')
+#    #pic = plt.imread(image1)
+#    plt.imshow(image1)
+#    print(image1)
+#    # get image pixels
+#    #print(image1.shape)
+#    # display the image in a matplotlib window
+#    fig = plt.figure()
+#    print(fig)
+#    ax = fig.subplots()
+#    print(ax)
+#    f = ax.imshow(image1[:, :, 1], alpha=0.8, cmap='gray', vmin=0, vmax=500, aspect='equal')
+#    print(f)
+#    fig.colorbar(f)
+#    plt.savefig('./new_image.jpg')
+#    #else: print("Error")
 
-###################
-    plt.imshow(image2)
-    vals = []
-
-    vals = []
-    for i in range(0, 201, 1):
-        if i < 50:
-            val_list = [0.0000033] * 200
-        elif i < 100:
-            val_list = [0.0000077] * 200
-        elif i < 150:
-            val_list = [0.0000099] * 200
-        vals.append(val_list)
-
-    plt.pcolormesh(vals, cmap=plt.get_cmap('jet'), alpha=0.5)  # levels=levels сглаживание
-    plt.axis('off')
-    plt.colorbar()
-    plt.savefig('./static/color.jpg')
 collage_path = './static/collage.jpg'
+#############
+def color_pics(path):
+    image = Image.open(path)
 
+    # трансформируем изображение в numpy массив
+    np_image = np.array(image)
+    # транспонируем, чтобы получить доступ к значениям RGB
+    image_transposed = np_image.transpose()
+    print(image_transposed.shape)
+    #plt.imshow(image_transposed)
+    plt.imshow(np.squeeze(image_transposed))
+    fig = plt.figure()
+    ax = fig.subplots()
+
+    #Image.load().convert('RGB')
+    f = ax.imshow(image_transposed[:, :, 1], cmap='plasma')
+    fig.colorbar(f)
+    plt.savefig('./new_image.jpg')
+    ############
 
 # главная страница приложения
 @app.route("/", methods=["GET", "POST"])
@@ -84,16 +99,19 @@ def index():
                os.remove('./static/' + file_path)
     #  Создаем форму. В случае успешной валидации, переходим на страницу с результатом
     form = CollageForm()  # Класс
-    shape = ' '
+    shape = None
     if form.validate_on_submit():  # возвращает True, когда форма была отправлена и данные были приняты всеми валидаторами полей
         filename1 = os.path.join('./static', secure_filename(form.img1.data.filename))
         form.img1.data.save(filename1)
         # открываем изображение
+        #Открывает и идентифицирует данный файл изображения.
+        #Это ленивая операция; эта функция идентифицирует файл, но файл остается открытым,
+        # и фактические данные изображения не считываются из файла, пока вы не попытаетесь обработать данные (или вызвать load()метод).
         image1 = Image.open(filename1)
-        color_pics(image1, shape)
         #collage=combine_pics.save(collage_path)
         #collage.save(collage_path)
         color_map(filename1, 'hist1')
+        color_pics(filename1)
         #get_color_chart(collage_path, 'hist2')
         # get_color_chart(collage_path, 'hist2')
         return redirect(url_for("result", image1=filename1))

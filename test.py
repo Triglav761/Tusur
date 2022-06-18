@@ -6,37 +6,26 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 pic = plt.imread('./static/1.jpg')
-# plt.imshow(image)
-# print(image)
+plt.imshow(pic)
+print(pic)
+#get image pixels
+print(pic.shape)
 
-# get image pixels
-#print(pic.shape)
-#
-## display the image in a matplotlib window
-#
-#fig = plt.figure()
-#ax = fig.subplots()
-#f = ax.imshow(pic[:,:,1], alpha=0.8, cmap='gray', vmin=0, vmax=500, aspect='equal')
-#fig.colorbar(f)
-## crop the image
+# display the image in a matplotlib window
+
+fig = plt.figure()
+ax = fig.subplots()
+f = ax.imshow(pic[:,:,1], alpha=0.8, cmap='gray', vmin=0, vmax=500, aspect='equal')
+fig.colorbar(f)
+# crop the image
 #ax.set_xlim(0,1920)
 #ax.set_ylim(0,1920)
-#plt.savefig('./static/new_image.jpg')
-#plt.show()
-# ax.imshow(pic)
-# plt.show()
-def get_main_color():
-    img = plt.imread('./static/1.jpg')
-    colors = img.getcolors(2000) #put a higher value if there are many colors in your image
-    max_occurence, most_present = 0, 0
-    try:
-        for c in colors:
-            if c[0] > max_occurence:
-                (max_occurence, most_present) = c
-        return most_present
-    except TypeError:
-        raise Exception("Too many colors in the image")
-get_main_color()
+plt.savefig('./static/new_image.jpg')
+plt.show()
+ax.imshow(pic)
+plt.show()
+
+
 # for i in range(0, 200,1):
 #    if i < 50:
 #        val_list = [2] * 200
