@@ -71,3 +71,37 @@ plt.show()
 ## Оценка того, совпадают ли считанные и сохраненные данные
 # print(np.all(data[data.keys()[0]] == im_data), np.all(data[data.keys()[1]] == im_l_data)) #Output True True
 #
+def color_pics(path):
+    image = plt.imread(path)
+    # трансформируем изображение в numpy массив
+    np_image = np.array(image)
+    # транспонируем, чтобы получить доступ к значениям RGB
+    image_transposed = np_image.transpose()
+    image_transposed.permute(1, 2, 0)
+    print(image_transposed.shape) # вывод 3 300 400 /// требуется 300 400 3
+    #Функция matplotlib 'imshow' получает 3-канальные изображения в виде (h, w, 3)
+
+    plt.imshow(image_transposed)
+    f = plt.imshow(image_transposed[:, :, 1], cmap='plasma')
+    plt.colorbar(f)
+    plt.savefig('./new_image.jpg')
+
+
+#image.open(path)
+#np_image = np.array(image)
+#plt.imshow(np_image[:,:,1], cmap=shape.lower())
+#И все никаких условий не надо даже
+#
+#
+#Попробуй так
+#
+#if shape.lower() == 'viridis':
+#if shape in ('Viridis', 'viridis'):
+#
+#А то твоя конструкция всегда истинна т.к. фактически ты проверяешь только shape == "foo",
+# а потом идёт всегда истинное or "bar"
+#
+#
+#
+#В if elif программа находит первое же условие и до условий после уже не доходит,
+# а когда 2 разных if то проверять будет каждый. даже если перед этим 1 уже удовлетворил условие
