@@ -20,7 +20,7 @@ app.config['SECRET_KEY'] = os.urandom(12).hex()
 class ColorForm(FlaskForm):
     img1 = FileField("Upload image", validators=[FileRequired(), FileAllowed(['jpg', 'jpeg', 'png'], 'Images only!')])
     submit = SubmitField("Submit", validators=[DataRequired()])
-    shape = SelectField("Collage shape", choices=[("Normal", "Normal"),("Plasma", "Plasma"), ("Viridis", "Viridis"),("Inferno", "Inferno"), ("Gray", "Gray")],
+    shape = SelectField("Collage shape", choices=[("Accent", "Accent"),("Blues", "Blues"), ("cool", "cool"),("BuGn", "BuGn"), ("Dark2", "Dark2")],
                         validators=[DataRequired()])
 
 
@@ -49,39 +49,11 @@ def color_map(path, filename): # график
 collage_path = './static/collage.jpg'
 #############
 def color_pics(path, shape):
-    #import the image file
-    #if shape == 'Plasma' or 'plasma':
     image=Image.open(path)
     np_image = np.array(image)
     print(shape)
     plt.imshow(np_image[:, :, 1], cmap=shape)
     plt.savefig('./static/new_image.jpg')
-    #image = Image.open(path)
-    #    # трансформируем изображение в numpy массив
-    #np_image = np.array(image)
-    #if shape in ('Plasma', 'Plasma'):
-    #    # транспонируем, чтобы получить доступ к значениям RGB
-    #    #Функция matplotlib 'imshow' получает 3-канальные изображения в виде (h, w, 3)
-    #    plt.imshow(np_image[:, :, 1], cmap='gray')
-    #    plt.savefig('./static/new_image.jpg')
-    #    print('1')
-#
-    #if shape in ('Viridis', 'Viridis'):
-    #    plt.imshow(np_image[:, :, 1], cmap='viridis')
-    #    plt.savefig('./static/new_image.jpg')
-    #    print('2')
-    #if shape in ('Inferno', 'inferno'):
-    #    plt.imshow(np_image[:, :, 1], cmap='inferno')
-    #    print('2')
-    #    plt.savefig('./static/new_image.jpg')
-#
-    #if shape in ('Gray', 'gray'):
-    #    # транспонируем, чтобы получить доступ к значениям RGB
-    #    # Функция matplotlib 'imshow' получает 3-канальные изображения в виде (h, w, 3)
-    #    plt.imshow(np_image[:, :, 1], cmap='Accent')
-    #    plt.colorbar()
-    #    print('4')
-    #    plt.savefig('./static/new_image.jpg')
 
     ############
 
@@ -95,8 +67,11 @@ def index():
            if file_path != 'style.css':
                os.remove('./static/' + file_path)
     #  Создаем форму. В случае успешной валидации, переходим на страницу с результатом
-    form = ColorForm()  # Класс
-    shape =
+    form = ColorForm()
+
+    if form.validate_on_submit():
+        shape=form.shape.data
+        print(form.shape.data)
     if form.validate_on_submit():  # возвращает True, когда форма была отправлена и данные были приняты всеми валидаторами полей
         filename1 = os.path.join('./static', secure_filename(form.img1.data.filename))
         form.img1.data.save(filename1)
