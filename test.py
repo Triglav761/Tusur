@@ -5,26 +5,26 @@ import numpy as np
 #https://stackoverflow.com/questions/2270874/image-color-detection-using-python
 import matplotlib.pyplot as plt
 
-pic = plt.imread('./static/1.jpg')
-plt.imshow(pic)
-print(pic)
-#get image pixels
-print(pic.shape)
-
-# display the image in a matplotlib window
-
-fig = plt.figure()
-ax = fig.subplots()
-f = ax.imshow(pic[:,:,1], alpha=0.8, cmap='gray', vmin=0, vmax=500, aspect='equal')
-fig.colorbar(f)
-# crop the image
-#ax.set_xlim(0,1920)
-#ax.set_ylim(0,1920)
-plt.savefig('./static/new_image.jpg')
-plt.show()
-ax.imshow(pic)
-plt.show()
-
+#pic = plt.imread('./static/1.jpg')
+#plt.imshow(pic)
+#print(pic)
+##get image pixels
+#print(pic.shape)
+#
+## display the image in a matplotlib window
+#
+#fig = plt.figure()
+#ax = fig.subplots()
+#f = ax.imshow(pic[:,:,1], alpha=0.8, cmap='gray', vmin=0, vmax=500, aspect='equal')
+#fig.colorbar(f)
+## crop the image
+##ax.set_xlim(0,1920)
+##ax.set_ylim(0,1920)
+#plt.savefig('./static/new_image.jpg')
+#plt.show()
+#ax.imshow(pic)
+#plt.show()
+#
 
 # for i in range(0, 200,1):
 #    if i < 50:
@@ -71,22 +71,26 @@ plt.show()
 ## Оценка того, совпадают ли считанные и сохраненные данные
 # print(np.all(data[data.keys()[0]] == im_data), np.all(data[data.keys()[1]] == im_l_data)) #Output True True
 #
-def color_pics(path):
-    image = plt.imread(path)
-    # трансформируем изображение в numpy массив
-    np_image = np.array(image)
-    # транспонируем, чтобы получить доступ к значениям RGB
-    image_transposed = np_image.transpose()
-    image_transposed.permute(1, 2, 0)
-    print(image_transposed.shape) # вывод 3 300 400 /// требуется 300 400 3
-    #Функция matplotlib 'imshow' получает 3-канальные изображения в виде (h, w, 3)
+#def color_pics(path):
+#    image = plt.imread(path)
+#    # трансформируем изображение в numpy массив
+#    np_image = np.array(image)
+#    # транспонируем, чтобы получить доступ к значениям RGB
+#    image_transposed = np_image.transpose()
+#    image_transposed.permute(1, 2, 0)
+#    print(image_transposed.shape) # вывод 3 300 400 /// требуется 300 400 3
+#    #Функция matplotlib 'imshow' получает 3-канальные изображения в виде (h, w, 3)
+#
+#    plt.imshow(image_transposed)
+#    f = plt.imshow(image_transposed[:, :, 1], cmap='plasma')
+#    plt.colorbar(f)
+#    plt.savefig('./new_image.jpg')
 
-    plt.imshow(image_transposed)
-    f = plt.imshow(image_transposed[:, :, 1], cmap='plasma')
-    plt.colorbar(f)
-    plt.savefig('./new_image.jpg')
+image_open = Image.open('./static/images/Image.jpg')
+np_image = np.array(image_open)
 
-
+plt.imshow(np_image[:, :, 1], cmap='Blues')
+plt.savefig('./static/images/new_image.jpg')
 #image.open(path)
 #np_image = np.array(image)
 #plt.imshow(np_image[:,:,1], cmap=shape.lower())
