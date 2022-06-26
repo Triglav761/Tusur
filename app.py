@@ -1,6 +1,3 @@
-# Веб-приложение должно менять цветовые карты изображения r, g, b в соответствии
-# с заданным пользователем порядком, выдавать графики распределения цветов
-# исходной картинки и графики среднего значения цвета по вертикали и горизонтали.
 import cv2
 from flask import Flask, render_template, request, redirect, url_for
 from flask_wtf import FlaskForm
@@ -26,14 +23,16 @@ class ColorForm(FlaskForm):
                                               ("Dark2", "Dark2")],
                                      validators=[DataRequired()])
 
-#меняет цветовую карту изображения
+
+# меняет цветовую карту изображения
 def color_pics(path, choosing_colormaps):
     image = Image.open(path)
     np_image = np.array(image)
     plt.imshow(np_image[:, :, 1], cmap=choosing_colormaps)
     plt.colorbar(orientation='vertical')
     plt.title('Color map:', text=choosing_colormaps)
-    plt.savefig('./static/images/new_image.jpg')
+    plt.axis("off")
+    plt.savefig('./static/images/color_pics.jpg')
     plt.close()
 
 
@@ -50,71 +49,63 @@ def color_map(path):
         rgb[i], bin = np.histogram(image_transposed[i], bins=256)
     # создаем график по получившимся данным и сохраняем его в виде изображения
     fig = plt.figure(figsize=(4, 4))
-    viewer = fig.add_subplot(1, 1, 1)
-    plt.plot(rgb[0], color='red', linestyle='solid', linewidth=1,
-             marker='o', markerfacecolor='blue', markersize=1)
+    # Separate Graph for each color
+    plt.plot(rgb[0], color='red', linestyle='solid',
+             marker='o', markerfacecolor='red', markersize=1)
     plt.plot(rgb[1], color='green', linestyle='solid', linewidth=1,
-             marker='o', markerfacecolor='blue', markersize=1)
+             marker='o', markerfacecolor='green', markersize=1)
     plt.plot(rgb[2], color='blue', linestyle='solid', linewidth=1,
              marker='o', markerfacecolor='blue', markersize=1)
-    # setting x and y axis range
-    plt.ylim()
-    plt.xlim()
 
     # именуем сторону x
     plt.xlabel('x - axis')
     # именуем сторону y
     plt.ylabel('y - axis')
-
-    # giving a title to my graph
+    plt.axis('tight')
+    # даём название графику
     plt.title('График распределения цветов!')
     fig.savefig(f'./static/images/color_map.jpg')
     plt.close()
     return 0
 
+
 ###################
-# Load image as BGR
 def average_color_image(path):
     image_bgr = cv2.imread(path, cv2.IMREAD_COLOR)
-    # Calculate the mean of each channel
+    # Вычисляем среднее значение каждого канала BGR
     rgb = cv2.mean(image_bgr)
-
-    # Swap blue and red values (making it RGB, not BGR)
+    # Вычисляем среднее значение каждого канала RGB
     observation = np.array([(rgb[0], rgb[1], rgb[2])])
-    # Show mean channel values
+    # Показать среднее значение канала
     observation
-    # Show image
+    # Показать изображение
     plt.imshow(observation), plt.axis("off")
+    # даём название графику
+    plt.title('Average color image')
     plt.savefig(f'./static/images/average_color_image.jpg')
     plt.show()
+
 
 ##############
 # Load image as BGR
 def average_color_graph(path):
     image_bgr = cv2.imread(path, cv2.IMREAD_COLOR)
-    # Calculate the mean of each channel
+    # Вычисляем среднее значение каждого канала BGR
     rgb = cv2.mean(image_bgr)
-
-    # Swap blue and red values (making it RGB, not BGR)
+    # Вычисляем среднее значение каждого канала RGB
     np.array([(rgb[0], rgb[1], rgb[2])])
-    # Show mean channel values
-    print(rgb[1])
-    plt.plot(rgb[0], color='red', linestyle='dotted', linewidth=1,
-             marker='o', markerfacecolor='blue', markersize=8)
-    plt.plot(rgb[1], color='green', linestyle='dotted', linewidth=1,
-             marker='o', markerfacecolor='blue', markersize=8)
-    plt.plot(rgb[2], color='blue', linestyle='dotted', linewidth=1,
-             marker='o', markerfacecolor='blue', markersize=8)
-    # setting x and y axis range
-    plt.ylim()
-    plt.xlim()
 
+    plt.plot(rgb[0], color='red', marker='o', markersize=8)
+    plt.plot(rgb[1], color='green',marker='o', markersize=8)
+    plt.plot(rgb[2], color='blue',marker='o', markersize=8)
     plt.xlabel('horizontal')
     plt.ylabel('vertical')
-    plt.title('График среднего значения цвета')
+    plt.title('Average color graph')
     plt.savefig(f'./static/images/average_color_graph.jpg')
     plt.show()
     plt.close()
+
+
 ##############
 # главная страница приложения
 @app.route("/", methods=["GET", "POST"])
