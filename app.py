@@ -1,6 +1,7 @@
+import app as app
 import cv2
 from flask import Flask, render_template, request, redirect, url_for
-from flask_wtf import FlaskForm
+from flask_wtf import FlaskForm, RecaptchaField
 from werkzeug.utils import secure_filename
 from wtforms import FileField, SubmitField, SelectField
 from wtforms.validators import DataRequired
@@ -10,9 +11,15 @@ import matplotlib.pyplot as plt
 import numpy as np
 from PIL import Image
 
-app = Flask(__name__)
 app.debug = True
+app = Flask(__name__)
 app.config['SECRET_KEY'] = os.urandom(12).hex()
+
+# Ключи для капчи
+app.config['RECAPTCHA_USE_SSL'] = False
+app.config['RECAPTCHA_PUBLIC_KEY'] = '6LfIwZ8gAAAAABE_Ch_6xbTMkOvt1tfjox-IPVw7'
+app.config['RECAPTCHA_PRIVATE_KEY'] = '6LfIwZ8gAAAAAJQaBoy92WOBg0pOMy0XHj3ouHrm'
+app.config['RECAPTCHA_OPTIONS'] = {'theme': 'white'}
 
 
 class ColorForm(FlaskForm):
@@ -22,18 +29,19 @@ class ColorForm(FlaskForm):
                                      choices=[("hot", "hot"), ("Blues", "Blues"), ("cool", "cool"), ("BuGn", "BuGn"),
                                               ("Dark2", "Dark2")],
                                      validators=[DataRequired()])
+    recaptcha = RecaptchaField()
 
 
 # меняет цветовую карту изображения
 def color_pics(path, choosing_colormaps):
-    image = Image.open(path)
-    np_image = np.array(image)
-    plt.imshow(np_image[:, :, 1], cmap=choosing_colormaps)
-    plt.colorbar(orientation='vertical')
-    plt.title('Color map:', text=choosing_colormaps)
-    plt.axis("off")
-    plt.savefig('./static/images/color_pics.jpg')
-    plt.close()
+    image = Image.open(path)  # открываем изображение
+    np_image = np.array(image)  # трансформируем в numpy массив
+    plt.imshow(np_image[:, :, 1], cmap=choosing_colormaps)  # преобразуем изображение в 2D массив.
+    plt.colorbar(orientation='vertical')  # цветовая шкала
+    plt.title('', text=choosing_colormaps)  # название использованной цветовой карты
+    plt.axis("off")  # убираем ось
+    plt.savefig('./static/images/color_pics.jpg')  # сохраняем рисунок
+    plt.close()  # закрываем, иначе при дальнейшем работе кода рисунок будет накладываться на другие.
 
 
 def color_map(path):
@@ -56,7 +64,6 @@ def color_map(path):
              marker='o', markerfacecolor='green', markersize=1)
     plt.plot(rgb[2], color='blue', linestyle='solid', linewidth=1,
              marker='o', markerfacecolor='blue', markersize=1)
-
     # именуем сторону x
     plt.xlabel('x - axis')
     # именуем сторону y
@@ -64,12 +71,11 @@ def color_map(path):
     plt.axis('tight')
     # даём название графику
     plt.title('График распределения цветов!')
-    fig.savefig(f'./static/images/color_map.jpg')
+    fig.savefig(f'./static/images/color_map.jpg', bbox_inches='tight')
     plt.close()
     return 0
 
 
-###################
 def average_color_image(path):
     image_bgr = cv2.imread(path, cv2.IMREAD_COLOR)
     # Вычисляем среднее значение каждого канала BGR
@@ -86,27 +92,25 @@ def average_color_image(path):
     plt.show()
 
 
-##############
-# Load image as BGR
 def average_color_graph(path):
-    image_bgr = cv2.imread(path, cv2.IMREAD_COLOR)
-    # Вычисляем среднее значение каждого канала BGR
-    rgb = cv2.mean(image_bgr)
-    # Вычисляем среднее значение каждого канала RGB
+    # Вычисляем среднее значение каждого канала
+    image_rgb = cv2.imread(path, cv2.IMREAD_COLOR)
+    rgb = cv2.mean(image_rgb)
     np.array([(rgb[0], rgb[1], rgb[2])])
-
+    # Выводим значения для каждого цвета R G B
     plt.plot(rgb[0], color='red', marker='o', markersize=8)
-    plt.plot(rgb[1], color='green',marker='o', markersize=8)
-    plt.plot(rgb[2], color='blue',marker='o', markersize=8)
+    plt.plot(rgb[1], color='green', marker='o', markersize=8)
+    plt.plot(rgb[2], color='blue', marker='o', markersize=8)
+    # подписи
     plt.xlabel('horizontal')
     plt.ylabel('vertical')
+    # название изображения
     plt.title('Average color graph')
     plt.savefig(f'./static/images/average_color_graph.jpg')
     plt.show()
     plt.close()
 
 
-##############
 # главная страница приложения
 @app.route("/", methods=["GET", "POST"])
 def index():
